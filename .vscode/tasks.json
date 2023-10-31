@@ -1,0 +1,15 @@
+{
+    "tasks": [
+        {
+            "type": "process",
+            "label": "Build CMAKE",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build"
+            ],
+
+         }
+    ],
+    "version": "2.0.0"
+}
