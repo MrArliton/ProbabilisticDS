@@ -37,7 +37,7 @@ private:
         uint64_t* hash_values = new uint64_t[amount_hash_func];
         for(uint16_t i = 0;i < amount_hash_func;i++)
         {
-            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size;  
+            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size;  // Rewrite for All templates
         }
         return hash_values; 
     }
@@ -138,7 +138,7 @@ uint64_t size;
         uint64_t* hash_values = new uint64_t[amount_hash_func];
         for(uint16_t i = 0;i < amount_hash_func;i++)
         {
-            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size; 
+            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size; // Rewrite for All templates
         }
         return hash_values; 
     } 
