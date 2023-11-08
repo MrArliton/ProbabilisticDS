@@ -37,7 +37,7 @@ private:
         uint64_t* hash_values = new uint64_t[amount_hash_func];
         for(uint16_t i = 0;i < amount_hash_func;i++)
         {
-            hash_values[i] = (std::hash<Type>{}(obj) ^ std::hash<uint16_t>{}(i)) % size; 
+            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size;  
         }
         return hash_values; 
     }
@@ -127,23 +127,24 @@ public:
 
 // Count-min Sketch
 //----------------------------------
-template<typename Type, uint64_t size, uint16_t amount_hash_func = 1> 
+template<typename Type, uint64_t sizee, uint16_t amount_hash_func = 1> 
 class cmsketch
 {
 private:
     uint64_t** data;
-
+uint64_t size;
     inline uint64_t* hash(const Type& obj)
     {
         uint64_t* hash_values = new uint64_t[amount_hash_func];
         for(uint16_t i = 0;i < amount_hash_func;i++)
         {
-            hash_values[i] = (std::hash<Type>{}(obj) ^ std::hash<uint16_t>{}(i)) % size; 
+            hash_values[i] = (std::hash<Type>{}(obj + std::to_string(i))) % size; 
         }
         return hash_values; 
     } 
 
 public:
+
     // Block copying and moving
     cmsketch(const cmsketch &) = delete;
     cmsketch(cmsketch &&) = delete;
@@ -159,7 +160,16 @@ public:
             for(uint16_t j = 0;j < amount_hash_func;j++) data[i][j] = 0;
         }
     }
-
+        cmsketch(uint64_t sz)
+    {
+        size = sz;
+        data = new uint64_t*[size];
+        for(uint64_t i = 0;i < size;i++)
+        {
+            data[i] = new uint64_t[amount_hash_func];           
+            for(uint16_t j = 0;j < amount_hash_func;j++) data[i][j] = 0;
+        }
+    }
     ~cmsketch()
     {
         for(uint64_t i = 0;i < size;i++)
@@ -203,6 +213,7 @@ class skiplist
 private:
     uint64_t size = 0;
     uint32_t amount_levels = 1; 
+    float probability = 0.5;
     struct node // Singly linked list
     {
         Type* value;
@@ -308,7 +319,7 @@ private:
     // You can change this function for another distribution
     {   
         std::srand(time(0));
-        if(std::rand() % 3 == 1) return true;
+        if((static_cast<double>(std::rand()) / static_cast<double>(INT_MAX)) < probability) return true;
         return false;
     }
 
